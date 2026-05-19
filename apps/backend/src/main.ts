@@ -1,9 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import { AppConfig } from './config/app.config.type';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  const configService = app.get(ConfigService);
+  const appConfig = configService.getOrThrow<AppConfig>('app');
+
+  app.setGlobalPrefix(appConfig.apiPrefix);
+
+  await app.listen(appConfig.port);
 }
 
 void bootstrap();
