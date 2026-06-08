@@ -54,3 +54,26 @@ This file helps AI coding agents understand the current repository structure and
 ## Important note
 
 The repository currently contains only the backend starter app. Do not assume the frontend or CI/Kubernetes configs already exist unless new files are being created as part of a requested enhancement.
+
+## Coding Style
+
+- All functions must explicitly define a return type, e.g. `(): Promise<Xxx>`.
+- Types should be imported from existing type definitions or defined in dedicated type files, e.g. `xxx.type.ts`.
+- Strictly no `any`.
+- Always use braces `{}` for `if`, `else if`, and `else` blocks, even when the block contains only a single statement.
+
+### Example
+
+❌ Do not write:
+
+```ts
+if (isValid) return result;
+```
+
+✅ Always write:
+
+```ts
+if (isValid) {
+  return result;
+}
+```
