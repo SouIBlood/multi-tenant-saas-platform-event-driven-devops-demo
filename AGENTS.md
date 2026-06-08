@@ -77,3 +77,17 @@ if (isValid) {
   return result;
 }
 ```
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues for this repo. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+This repo uses the default canonical triage labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This repo is configured as a single-context layout. See `docs/agents/domain.md`.
