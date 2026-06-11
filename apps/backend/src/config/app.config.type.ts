@@ -1,6 +1,6 @@
 export interface AppConfig {
   name: string;
-  env: string;
+  env: 'development' | 'production';
   port: number;
   apiPrefix: string;
 }

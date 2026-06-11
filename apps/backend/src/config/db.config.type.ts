@@ -5,4 +5,6 @@ export interface DbConfig {
   password: string;
   database: string;
   logging: boolean;
+  ssl?: boolean;
+  ca?: string;
 }

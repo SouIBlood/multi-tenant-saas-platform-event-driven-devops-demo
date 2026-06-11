@@ -5,10 +5,12 @@ export default registerAs(
   'db',
   (): DbConfig => ({
     host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '3306', 10),
-    username: process.env.DB_USERNAME || 'root',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'app_db',
+    database: process.env.DB_NAME || 'erp_db',
     logging: process.env.DB_LOGGING === 'true',
+    ssl: process.env.DB_SSL === 'true',
+    ca: process.env.DB_CA || '',
   }),
 );
