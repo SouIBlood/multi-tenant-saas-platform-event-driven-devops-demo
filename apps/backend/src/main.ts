@@ -10,6 +10,7 @@ async function bootstrap(): Promise<void> {
   const appConfig = configService.getOrThrow<AppConfig>('app');
 
   app.setGlobalPrefix(appConfig.apiPrefix);
+  app.enableShutdownHooks();
 
   await app.listen(appConfig.port);
 }

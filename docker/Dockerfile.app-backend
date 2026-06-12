@@ -1,0 +1,46 @@
+# ---- BUILD STAGE ----
+FROM node:24-alpine AS builder
+
+ARG BUILD_IMAGE_VERSION
+
+WORKDIR /builder
+
+# Enable pnpm, https://nodejs.org/api/corepack.html
+RUN corepack enable
+
+# Copy package.json and pnpm-lock.json first (for better caching)
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+# For node_modules post install
+COPY pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# Copy the entire source code for building
+COPY . .
+ENV CI=true
+RUN pnpm build
+
+# Remove dev dependencies
+RUN pnpm prune --prod
+
+
+# ---- RUN STAGE ----
+FROM node:24-alpine
+
+ARG BUILD_IMAGE_VERSION
+
+WORKDIR /usr/src/app
+
+# Copy all built files to folder /usr/src/app
+COPY --from=builder --chown=node /builder/dist ./
+# Copy all node_modules files to folder /usr/src/app/node_modules
+COPY --from=builder --chown=node /builder/node_modules ./node_modules
+
+USER node
+
+ENV NODE_ENV=production
+ENV APP_PORT=3000
+ENV APP_API_VERSION=${BUILD_IMAGE_VERSION}
+
+CMD ["node", "main"]
+EXPOSE 3000

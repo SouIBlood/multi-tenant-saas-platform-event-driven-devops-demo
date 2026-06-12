@@ -11,6 +11,6 @@ export default registerAs(
     database: process.env.DB_NAME || 'erp_db',
     logging: process.env.DB_LOGGING === 'true',
     ssl: process.env.DB_SSL === 'true',
-    ca: process.env.DB_CA || '',
+    ca: process.env.DB_CA ? process.env.DB_CA.replace(/\\n/g, '\n') : undefined,
   }),
 );
