@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import type { AuthUser } from './auth-user.type';
-import { getGqlRequestFromContext } from 'src/app/helpers/http.helper';
+import { getGqlRequestFromContext } from 'src/helpers/http.helper';
 
 /**
  * Custom decorator to extract user information from GraphQL context.

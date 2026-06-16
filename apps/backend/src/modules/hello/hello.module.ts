@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HelloResolver } from 'src/app/modules/hello/hello.resolver';
+import { HelloResolver } from 'src/modules/hello/hello.resolver';
 
 @Module({
   imports: [],

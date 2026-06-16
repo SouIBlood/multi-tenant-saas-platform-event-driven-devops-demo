@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HelloModule } from 'src/app/modules/hello/hello.module';
+import { HelloModule } from './modules/hello/hello.module';
 import appConfig from 'src/config/app.config';
 import authConfig from 'src/config/auth.config';
 import dbConfig from 'src/config/db.config';
@@ -11,6 +11,19 @@ import redisConfig from 'src/config/redis.config';
 import pusherConfig from 'src/config/pusher.config';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import type { Request } from 'express';
+import {
+  Tenant,
+  Organization,
+  Branch,
+  User,
+  UserBranchAccess,
+  Customer,
+  Item,
+  SalesOrder,
+  SalesOrderLineItem,
+  DeliveryOrder,
+  BranchConfig,
+} from './entities';
 
 @Module({
   imports: [
@@ -28,6 +41,7 @@ import type { Request } from 'express';
         username: configService.getOrThrow<string>('db.username'),
         password: configService.getOrThrow<string>('db.password'),
         database: configService.getOrThrow<string>('db.database'),
+        schema: configService.get<string>('db.schema'),
         ssl:
           configService.get<boolean>('db.ssl') === true
             ? {
@@ -37,6 +51,19 @@ import type { Request } from 'express';
         logging: configService.get('db.logging') === true,
         synchronize: configService.get('app.env') === 'development',
         autoLoadEntities: true,
+        entities: [
+          Tenant,
+          Organization,
+          Branch,
+          User,
+          UserBranchAccess,
+          Customer,
+          Item,
+          SalesOrder,
+          SalesOrderLineItem,
+          DeliveryOrder,
+          BranchConfig,
+        ],
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

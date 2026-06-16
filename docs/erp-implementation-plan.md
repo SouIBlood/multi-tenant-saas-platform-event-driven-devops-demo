@@ -31,41 +31,46 @@ Create TypeORM entities for:
 
 - `Tenant`
   - owns organizations
+  - has `ownerId` linked to the owning `User`
 - `Organization`
   - belongs to tenant
   - owns branches, users, master data, sales orders
 - `Branch`
   - belongs to organization
-  - has `morningNotificationTime`
-  - has `notificationEnabled`
+  - belongs to tenant
+  - has `address`
+  - has `isActive`
 - `User`
   - belongs to tenant
-  - belongs to organization
   - maps to Auth0 identity
-- `Driver`
-  - organization-scoped profile
-  - linked to `User`
-- `BranchDriverAccess`
-  - join table for drivers/users and branches
-  - allows driver eligibility by branch
+  - stores `phone`, `roles: enum[]`, and active status
+- `UserBranchAccess`
+  - join table for users and branches
+  - enables branch-specific access roles such as `DRIVER`
 - `Customer`
-  - organization-scoped
+  - scoped to tenant, organization, and branch
   - fields: `name`, `contactPhone`
 - `Item`
-  - organization-scoped
+  - scoped to tenant, organization, and branch
   - fields: `name`, `sku`, `price`
 - `SalesOrder`
-  - belongs to organization
+  - belongs to tenant, organization, and branch
   - references `Customer`
+  - has required `branchId`
   - contains line items
 - `SalesOrderLineItem`
+  - scoped to tenant, organization, branch
   - references `Item`
-  - includes quantity and price
+  - includes quantity, unitPrice, and lineTotal
 - `DeliveryOrder`
-  - belongs to branch
+  - belongs to tenant, organization, and fulfillment branch
   - references `SalesOrder`
-  - assigned to one `Driver`
-  - has status and completion metadata
+  - assigns to `driverUserId`
+  - has delivery lifecycle status and `deliveredAt`
+- `BranchConfig`
+  - belongs to tenant, organization, branch
+  - uses enum `configCode` values like `driverNotificationTime` and `driverNotificationEnabled`
+  - stores string `configValue`
 
 ## Phase 3: Module and GraphQL structure
 
@@ -87,10 +92,14 @@ Create new Nest modules under `apps/backend/src/app/modules/`:
   - `user.module.ts`
   - `user.service.ts`
   - optionally `user.resolver.ts`
-- `driver/`
-  - `driver.module.ts`
-  - `driver.resolver.ts`
-  - `driver.service.ts`
+- `user/`
+  - `user.module.ts`
+  - `user.resolver.ts`
+  - `user.service.ts`
+- `access/`
+  - `access.module.ts`
+  - `user-branch-access.resolver.ts`
+  - `user-branch-access.service.ts`
 - `master-data/`
   - `customer.module.ts`
   - `item.module.ts`
@@ -213,7 +222,9 @@ Queries should include:
 - Persistence: `Postgres`
 - ORM: `TypeORM`
 - Notifications: `BullMQ + Redis` for jobs, `Pusher` for real-time delivery
-- Driver: organization-scoped profile attached to existing user
-- Data scope: `Customer`, `Item`, and driver branch access under organization
-- Sales order: organization-scoped
-- Delivery order: branch-scoped and assigned to eligible drivers
+- Tenant: top-level boundary with an `ownerId` user reference
+- User: local auth identity with role enum[] and no branch primary field
+- Branch access: handled by `UserBranchAccess` for driver eligibility
+- Data scope: `Customer`, `Item`, and branch config scoped to tenant/organization/branch
+- Sales order: branch-scoped and contains required `branchId`
+- Delivery order: fulfillment branch-scoped and assigned to `driverUserId`

@@ -9,6 +9,7 @@ export default registerAs(
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'erp_db',
+    schema: process.env.DB_SCHEMA || 'erp_schema',
     logging: process.env.DB_LOGGING === 'true',
     ssl: process.env.DB_SSL === 'true',
     ca: process.env.DB_CA ? process.env.DB_CA.replace(/\\n/g, '\n') : undefined,
