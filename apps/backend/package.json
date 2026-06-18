@@ -33,7 +33,6 @@
     "graphql": "^16.14.2",
     "ioredis": "^5.11.1",
     "pg": "^8.21.0",
-    "pusher": "^5.3.4",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "typeorm": "^1.0.0"
